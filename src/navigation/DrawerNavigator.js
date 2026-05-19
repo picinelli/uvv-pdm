@@ -17,7 +17,6 @@ export default function DrawerNavigator() {
 
   return (
     <Drawer.Navigator
-      useLegacyImplementation={false}
       initialRouteName={logado ? 'Tarefas' : 'Cadastro'}
       drawerContent={(props) => <CustomDrawerContent {...props} />}
       screenOptions={{

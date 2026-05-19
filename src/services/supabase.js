@@ -1,5 +1,10 @@
-import 'react-native-url-polyfill/auto';
+import { Platform } from 'react-native';
+import { setupURLPolyfill } from 'react-native-url-polyfill';
 import { createClient } from '@supabase/supabase-js';
+
+if (Platform.OS !== 'web') {
+  setupURLPolyfill();
+}
 
 const supabaseUrl =
   process.env.EXPO_PUBLIC_SUPABASE_URL ||
