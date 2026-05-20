@@ -1,7 +1,7 @@
 import React from 'react';
-import { View, Text, TextInput } from 'react-native';
+import { View } from 'react-native';
+import { TextInput, HelperText } from 'react-native-paper';
 
-import { colors } from '../../theme/colors';
 import { styles } from './styles';
 
 export default function FormTextInput({
@@ -18,27 +18,30 @@ export default function FormTextInput({
   multiline,
 }) {
   const showError = Boolean(touched && error);
+
   return (
     <View style={styles.wrapper}>
-      {label ? <Text style={styles.label}>{label}</Text> : null}
       <TextInput
-        style={[
-          styles.input,
-          multiline && styles.multiline,
-          showError && styles.inputError,
-        ]}
+        mode="outlined"
+        label={label}
         value={value}
         onChangeText={onChangeText}
         onBlur={onBlur}
         placeholder={placeholder}
-        placeholderTextColor={colors.textMuted}
         secureTextEntry={secureTextEntry}
         keyboardType={keyboardType}
         autoCapitalize={autoCapitalize}
         multiline={multiline}
-        textAlignVertical={multiline ? 'top' : 'center'}
+        numberOfLines={multiline ? 4 : 1}
+        error={showError}
+        style={styles.input}
+        outlineStyle={styles.outline}
       />
-      {showError ? <Text style={styles.errorText}>{error}</Text> : null}
+      {showError ? (
+        <HelperText type="error" visible={showError}>
+          {error}
+        </HelperText>
+      ) : null}
     </View>
   );
 }

@@ -1,35 +1,34 @@
-import { StyleSheet } from 'react-native';
+import { Platform, StyleSheet } from 'react-native';
 
-import { colors } from '../../theme/colors';
 import { webContentWidth } from '../../utils/webLayout';
 
 export const styles = StyleSheet.create({
   wrapper: {
-    marginBottom: 14,
+    marginBottom: 4,
     ...webContentWidth,
   },
-  label: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: colors.text,
-    marginBottom: 6,
+  areaClicavel: {
+    width: '100%',
+    ...Platform.select({
+      web: { cursor: 'pointer' },
+    }),
   },
-  pickerBox: {
-    backgroundColor: colors.surface,
-    borderWidth: 1,
-    borderColor: colors.border,
-    borderRadius: 10,
-    overflow: 'hidden',
+  input: {
+    backgroundColor: 'transparent',
   },
-  picker: {
-    color: colors.text,
+  outline: {
+    borderRadius: 12,
   },
-  errorBox: {
-    borderColor: colors.error,
+  campoNativo: {
+    position: 'relative',
   },
-  errorText: {
-    color: colors.error,
-    marginTop: 4,
-    fontSize: 13,
+  pickerSobreposto: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    opacity: Platform.OS === 'ios' ? 1 : 0.02,
+    color: 'transparent',
   },
 });

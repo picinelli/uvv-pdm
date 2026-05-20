@@ -6,7 +6,10 @@ import { NavigationContainer } from '@react-navigation/native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
+import { PaperProvider } from 'react-native-paper';
+
 import RootNavigator from './src/navigation/RootNavigator';
+import { paperTheme } from './src/theme/paperTheme';
 import { UserProvider } from './src/contexts/UserContext';
 import { TaskProvider } from './src/contexts/TaskContext';
 import ErrorBoundary from './src/components/ErrorBoundary';
@@ -28,16 +31,18 @@ export default function App() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <SafeAreaProvider>
-        <ErrorBoundary>
-          <UserProvider>
-            <TaskProvider>
-              <NavigationContainer>
-                <StatusBar style="light" />
-                <RootNavigator />
-              </NavigationContainer>
-            </TaskProvider>
-          </UserProvider>
-        </ErrorBoundary>
+        <PaperProvider theme={paperTheme}>
+          <ErrorBoundary>
+            <UserProvider>
+              <TaskProvider>
+                <NavigationContainer>
+                  <StatusBar style="light" />
+                  <RootNavigator />
+                </NavigationContainer>
+              </TaskProvider>
+            </UserProvider>
+          </ErrorBoundary>
+        </PaperProvider>
       </SafeAreaProvider>
     </GestureHandlerRootView>
   );
