@@ -14,6 +14,9 @@ export const styles = StyleSheet.create({
   buttonSecondary: {
     backgroundColor: colors.secondary,
   },
+  buttonDanger: {
+    backgroundColor: colors.error,
+  },
   disabled: {
     opacity: 0.6,
   },

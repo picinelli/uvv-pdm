@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState, useCallback } from 'react';
-import { View, FlatList, Text, RefreshControl, ActivityIndicator } from 'react-native';
+import { View, FlatList, Text, RefreshControl, ActivityIndicator, Alert } from 'react-native';
 
 import PickerField from '../../components/PickerField';
 import TaskCard from '../../components/TaskCard';
@@ -24,9 +24,10 @@ const OPCOES_PRIORIDADE = [
 ];
 
 export default function TaskListScreen({ navigation }) {
-  const { tarefas, loading, error, carregar } = useTasks();
+  const { tarefas, loading, error, carregar, excluir } = useTasks();
   const [filtroStatus, setFiltroStatus] = useState('todos');
   const [filtroPrioridade, setFiltroPrioridade] = useState('todas');
+  const [excluindoId, setExcluindoId] = useState(null);
 
   useEffect(() => {
     carregar();
@@ -43,6 +44,33 @@ export default function TaskListScreen({ navigation }) {
   const handleAbrir = useCallback(
     (item) => navigation.navigate('DetalheTarefa', { taskId: item.id }),
     [navigation]
+  );
+
+  const handleExcluir = useCallback(
+    (item) => {
+      Alert.alert(
+        'Excluir tarefa',
+        `Deseja excluir "${item.titulo}"? Esta ação não pode ser desfeita.`,
+        [
+          { text: 'Cancelar', style: 'cancel' },
+          {
+            text: 'Excluir',
+            style: 'destructive',
+            onPress: async () => {
+              setExcluindoId(item.id);
+              try {
+                await excluir(item.id);
+              } catch (e) {
+                Alert.alert('Erro', e.message);
+              } finally {
+                setExcluindoId(null);
+              }
+            },
+          },
+        ]
+      );
+    },
+    [excluir]
   );
 
   return (
@@ -70,7 +98,13 @@ export default function TaskListScreen({ navigation }) {
         <FlatList
           data={tarefasFiltradas}
           keyExtractor={(item) => item.id}
-          renderItem={({ item }) => <TaskCard tarefa={item} onPress={() => handleAbrir(item)} />}
+          renderItem={({ item }) => (
+            <TaskCard
+              tarefa={item}
+              onPress={() => handleAbrir(item)}
+              onDelete={excluindoId === item.id ? undefined : () => handleExcluir(item)}
+            />
+          )}
           contentContainerStyle={styles.lista}
           refreshControl={
             <RefreshControl refreshing={loading} onRefresh={carregar} colors={[colors.primary]} />

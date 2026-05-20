@@ -16,7 +16,7 @@ const PRIORIDADE_LABEL = {
   alta: 'Alta',
 };
 
-export default function TaskCard({ tarefa, onPress }) {
+export default function TaskCard({ tarefa, onPress, onDelete }) {
   const dataFormatada = tarefa.created_at
     ? new Date(tarefa.created_at).toLocaleDateString('pt-BR')
     : '';
@@ -27,7 +27,19 @@ export default function TaskCard({ tarefa, onPress }) {
         <Text style={styles.titulo} numberOfLines={1}>
           {tarefa.titulo}
         </Text>
-        <Text style={styles.data}>{dataFormatada}</Text>
+        <View style={styles.headerActions}>
+          <Text style={styles.data}>{dataFormatada}</Text>
+          {onDelete ? (
+            <TouchableOpacity
+              onPress={onDelete}
+              hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+              accessibilityRole="button"
+              accessibilityLabel="Excluir tarefa"
+            >
+              <Text style={styles.excluir}>Excluir</Text>
+            </TouchableOpacity>
+          ) : null}
+        </View>
       </View>
 
       {tarefa.descricao ? (

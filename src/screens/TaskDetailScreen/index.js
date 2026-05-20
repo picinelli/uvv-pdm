@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, ActivityIndicator } from 'react-native';
+import { View, Text, ActivityIndicator, Alert } from 'react-native';
 
 import ScreenContainer from '../../components/ScreenContainer';
 import PrimaryButton from '../../components/PrimaryButton';
@@ -18,11 +18,12 @@ const PRIORIDADE_LABEL = { baixa: 'Baixa', media: 'Média', alta: 'Alta' };
 
 export default function TaskDetailScreen({ route, navigation }) {
   const { taskId } = route.params ?? {};
-  const { tarefas } = useTasks();
+  const { tarefas, excluir } = useTasks();
   const { usuarioId } = useUser();
   const [tarefa, setTarefa] = useState(null);
   const [loading, setLoading] = useState(true);
   const [erro, setErro] = useState(null);
+  const [excluindo, setExcluindo] = useState(false);
 
   useEffect(() => {
     if (!taskId) {
@@ -93,6 +94,31 @@ export default function TaskDetailScreen({ route, navigation }) {
     ? new Date(tarefa.created_at).toLocaleString('pt-BR')
     : '';
 
+  const handleExcluir = () => {
+    Alert.alert(
+      'Excluir tarefa',
+      `Deseja excluir "${tarefa.titulo}"? Esta ação não pode ser desfeita.`,
+      [
+        { text: 'Cancelar', style: 'cancel' },
+        {
+          text: 'Excluir',
+          style: 'destructive',
+          onPress: async () => {
+            setExcluindo(true);
+            try {
+              await excluir(tarefa.id);
+              navigation.navigate('Tarefas');
+            } catch (e) {
+              Alert.alert('Erro', e.message);
+            } finally {
+              setExcluindo(false);
+            }
+          },
+        },
+      ]
+    );
+  };
+
   return (
     <ScreenContainer>
       <Text style={styles.titulo}>{tarefa.titulo}</Text>
@@ -114,8 +140,15 @@ export default function TaskDetailScreen({ route, navigation }) {
         {tarefa.descricao?.trim() ? tarefa.descricao : 'Sem descrição.'}
       </Text>
 
-      <View style={styles.botao}>
+      <View style={styles.botoes}>
         <PrimaryButton title="Voltar para a lista" onPress={() => navigation.goBack()} />
+        <PrimaryButton
+          title="Excluir tarefa"
+          variant="danger"
+          loading={excluindo}
+          disabled={excluindo}
+          onPress={handleExcluir}
+        />
       </View>
     </ScreenContainer>
   );

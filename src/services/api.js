@@ -158,6 +158,15 @@ export async function createTask({ titulo, descricao, status, prioridade, usuari
   return data;
 }
 
+export async function deleteTask(taskId) {
+  const { error } = await supabase.from('tarefas').delete().eq('id', taskId);
+
+  if (error) {
+    if (__DEV__) console.log('[deleteTask] erro:', error);
+    throw new Error(traduzirErro(error));
+  }
+}
+
 function traduzirAuthErro(error) {
   const msg = error?.message || '';
   if (msg.includes('Invalid login credentials')) return 'E-mail ou senha inválidos.';

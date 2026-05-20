@@ -1,6 +1,6 @@
 import React, { createContext, useState, useEffect, useCallback, useMemo, useContext } from 'react';
 
-import { fetchTasks, createTask as apiCreateTask } from '../services/api';
+import { fetchTasks, createTask as apiCreateTask, deleteTask as apiDeleteTask } from '../services/api';
 import { useUser } from './UserContext';
 
 export const TaskContext = createContext(null);
@@ -37,6 +37,11 @@ export function TaskProvider({ children }) {
     [usuarioId]
   );
 
+  const excluir = useCallback(async (taskId) => {
+    await apiDeleteTask(taskId);
+    setTarefas((prev) => prev.filter((t) => t.id !== taskId));
+  }, []);
+
   useEffect(() => {
     if (!usuarioId) {
       setTarefas([]);
@@ -45,8 +50,8 @@ export function TaskProvider({ children }) {
   }, [usuarioId]);
 
   const value = useMemo(
-    () => ({ tarefas, loading, error, carregar, adicionar }),
-    [tarefas, loading, error, carregar, adicionar]
+    () => ({ tarefas, loading, error, carregar, adicionar, excluir }),
+    [tarefas, loading, error, carregar, adicionar, excluir]
   );
 
   return <TaskContext.Provider value={value}>{children}</TaskContext.Provider>;

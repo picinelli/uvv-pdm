@@ -16,6 +16,7 @@ export default function PrimaryButton({
       style={[
         styles.button,
         variant === 'secondary' && styles.buttonSecondary,
+        variant === 'danger' && styles.buttonDanger,
         isDisabled && styles.disabled,
       ]}
       onPress={onPress}

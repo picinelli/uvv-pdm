@@ -48,7 +48,8 @@ export const styles = StyleSheet.create({
   loading: {
     marginTop: 40,
   },
-  botao: {
+  botoes: {
     marginTop: 8,
+    gap: 12,
   },
 });
