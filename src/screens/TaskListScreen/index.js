@@ -161,7 +161,9 @@ export default function TaskListScreen({ navigation }) {
       )}
 
       <View style={styles.botaoFlutuante}>
-        <PrimaryButton title="+ Nova tarefa" onPress={() => navigation.navigate('NovaTarefa')} />
+        <View style={styles.botaoFlutuanteInner}>
+          <PrimaryButton title="+ Nova tarefa" onPress={() => navigation.navigate('NovaTarefa')} />
+        </View>
       </View>
     </View>
   );

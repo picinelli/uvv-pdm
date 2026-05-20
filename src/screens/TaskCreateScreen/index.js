@@ -57,10 +57,11 @@ export default function TaskCreateScreen({ navigation }) {
 
   return (
     <ScreenContainer>
-      <Text style={styles.titulo}>Nova tarefa</Text>
-      <Text style={styles.subtitulo}>Preencha os dados abaixo para criar uma tarefa.</Text>
+      <View style={styles.conteudo}>
+        <Text style={styles.titulo}>Nova tarefa</Text>
+        <Text style={styles.subtitulo}>Preencha os dados abaixo para criar uma tarefa.</Text>
 
-      <Formik initialValues={valoresIniciais} validationSchema={schema} onSubmit={handleSubmit}>
+        <Formik initialValues={valoresIniciais} validationSchema={schema} onSubmit={handleSubmit}>
         {({
           handleChange,
           handleBlur,
@@ -130,7 +131,8 @@ export default function TaskCreateScreen({ navigation }) {
             </View>
           </View>
         )}
-      </Formik>
+        </Formik>
+      </View>
     </ScreenContainer>
   );
 }

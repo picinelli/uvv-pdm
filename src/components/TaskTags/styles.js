@@ -1,6 +1,11 @@
 import { StyleSheet } from 'react-native';
 
+import { webContentWidth } from '../../utils/webLayout';
+
 export const styles = StyleSheet.create({
+  wrapper: {
+    ...webContentWidth,
+  },
   tagsRow: {
     flexDirection: 'row',
     gap: 8,

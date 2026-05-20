@@ -1,6 +1,8 @@
 import { StyleSheet } from 'react-native';
 
 import { colors } from '../../theme/colors';
+import { WEB_CONTENT_MAX_WIDTH } from '../../theme/webLayout';
+import { webContentWidth } from '../../utils/webLayout';
 
 export const styles = StyleSheet.create({
   container: {
@@ -29,12 +31,19 @@ export const styles = StyleSheet.create({
   erro: {
     color: colors.error,
     marginBottom: 10,
+    ...webContentWidth,
   },
   botaoFlutuante: {
     position: 'absolute',
     bottom: 20,
-    left: 20,
-    right: 20,
+    left: 0,
+    right: 0,
+    alignItems: 'center',
+    paddingHorizontal: 20,
+  },
+  botaoFlutuanteInner: {
+    width: '100%',
+    maxWidth: WEB_CONTENT_MAX_WIDTH,
   },
   botaoCadastro: {
     paddingHorizontal: 20,

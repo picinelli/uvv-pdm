@@ -1,8 +1,7 @@
-import { Platform, StyleSheet } from 'react-native';
+import { StyleSheet } from 'react-native';
 
 import { colors } from '../../theme/colors';
-
-const CALENDAR_MAX_WIDTH = 400;
+import { webContentWidth } from '../../utils/webLayout';
 
 export const styles = StyleSheet.create({
   wrapper: {
@@ -13,13 +12,7 @@ export const styles = StyleSheet.create({
     padding: 10,
     marginBottom: 10,
     alignSelf: 'stretch',
-    ...Platform.select({
-      web: {
-        width: '100%',
-        maxWidth: CALENDAR_MAX_WIDTH,
-        alignSelf: 'center',
-      },
-    }),
+    ...webContentWidth,
   },
   cabecalho: {
     flexDirection: 'row',

@@ -1,6 +1,7 @@
 import { StyleSheet } from 'react-native';
 
 import { colors } from '../../theme/colors';
+import { webContentWidth } from '../../utils/webLayout';
 
 export const styles = StyleSheet.create({
   button: {
@@ -10,6 +11,7 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     minHeight: 50,
+    ...webContentWidth,
   },
   buttonSecondary: {
     backgroundColor: colors.secondary,

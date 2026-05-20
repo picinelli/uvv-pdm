@@ -1,8 +1,13 @@
 import { StyleSheet } from 'react-native';
 
 import { colors } from '../../theme/colors';
+import { webContentWidth } from '../../utils/webLayout';
 
 export const styles = StyleSheet.create({
+  conteudo: {
+    width: '100%',
+    ...webContentWidth,
+  },
   titulo: {
     fontSize: 24,
     fontWeight: '700',

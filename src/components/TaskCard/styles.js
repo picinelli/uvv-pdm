@@ -1,6 +1,7 @@
 import { StyleSheet } from 'react-native';
 
 import { colors } from '../../theme/colors';
+import { webContentWidth } from '../../utils/webLayout';
 
 export const styles = StyleSheet.create({
   card: {
@@ -10,6 +11,7 @@ export const styles = StyleSheet.create({
     marginBottom: 12,
     borderWidth: 1,
     borderColor: colors.border,
+    ...webContentWidth,
   },
   header: {
     flexDirection: 'row',

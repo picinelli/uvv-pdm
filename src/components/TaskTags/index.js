@@ -43,7 +43,8 @@ export default function TaskTags({
 
   return (
     <>
-      <View style={styles.tagsRow}>
+      <View style={styles.wrapper}>
+        <View style={styles.tagsRow}>
         <TouchableOpacity
           style={[styles.tag, { backgroundColor: statusColors[tarefa.status] }]}
           onPress={abrirStatus}
@@ -66,6 +67,7 @@ export default function TaskTags({
             {PRIORIDADE_LABEL[tarefa.prioridade] ?? tarefa.prioridade}
           </Text>
         </TouchableOpacity>
+        </View>
       </View>
 
       <OptionPickerModal

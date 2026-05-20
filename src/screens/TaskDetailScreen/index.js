@@ -71,7 +71,9 @@ export default function TaskDetailScreen({ route, navigation }) {
   if (loading) {
     return (
       <ScreenContainer>
-        <ActivityIndicator size="large" color={colors.primary} style={styles.loading} />
+        <View style={styles.conteudo}>
+          <ActivityIndicator size="large" color={colors.primary} style={styles.loading} />
+        </View>
       </ScreenContainer>
     );
   }
@@ -79,9 +81,11 @@ export default function TaskDetailScreen({ route, navigation }) {
   if (erro || !tarefa) {
     return (
       <ScreenContainer>
-        <Text style={styles.titulo}>Tarefa indisponível</Text>
-        <Text style={styles.erro}>{erro ?? 'Tarefa não encontrada.'}</Text>
-        <PrimaryButton title="Voltar" onPress={() => navigation.goBack()} />
+        <View style={styles.conteudo}>
+          <Text style={styles.titulo}>Tarefa indisponível</Text>
+          <Text style={styles.erro}>{erro ?? 'Tarefa não encontrada.'}</Text>
+          <PrimaryButton title="Voltar" onPress={() => navigation.goBack()} />
+        </View>
       </ScreenContainer>
     );
   }
@@ -130,31 +134,33 @@ export default function TaskDetailScreen({ route, navigation }) {
 
   return (
     <ScreenContainer>
-      <Text style={styles.titulo}>{tarefa.titulo}</Text>
-      <Text style={styles.data}>Data da tarefa: {dataTarefa}</Text>
-      {criadaEm ? <Text style={styles.data}>Criada em {criadaEm}</Text> : null}
+      <View style={styles.conteudo}>
+        <Text style={styles.titulo}>{tarefa.titulo}</Text>
+        <Text style={styles.data}>Data da tarefa: {dataTarefa}</Text>
+        {criadaEm ? <Text style={styles.data}>Criada em {criadaEm}</Text> : null}
 
-      <TaskTags
-        tarefa={tarefa}
-        onStatusChange={(status) => handleAtualizarCampo({ status })}
-        onPrioridadeChange={(prioridade) => handleAtualizarCampo({ prioridade })}
-        disabled={atualizando || excluindo}
-      />
-
-      <Text style={styles.label}>Descrição</Text>
-      <Text style={styles.descricao}>
-        {tarefa.descricao?.trim() ? tarefa.descricao : 'Sem descrição.'}
-      </Text>
-
-      <View style={styles.botoes}>
-        <PrimaryButton title="Voltar para a lista" onPress={() => navigation.goBack()} />
-        <PrimaryButton
-          title="Excluir tarefa"
-          variant="danger"
-          loading={excluindo}
-          disabled={excluindo}
-          onPress={handleExcluir}
+        <TaskTags
+          tarefa={tarefa}
+          onStatusChange={(status) => handleAtualizarCampo({ status })}
+          onPrioridadeChange={(prioridade) => handleAtualizarCampo({ prioridade })}
+          disabled={atualizando || excluindo}
         />
+
+        <Text style={styles.label}>Descrição</Text>
+        <Text style={styles.descricao}>
+          {tarefa.descricao?.trim() ? tarefa.descricao : 'Sem descrição.'}
+        </Text>
+
+        <View style={styles.botoes}>
+          <PrimaryButton title="Voltar para a lista" onPress={() => navigation.goBack()} />
+          <PrimaryButton
+            title="Excluir tarefa"
+            variant="danger"
+            loading={excluindo}
+            disabled={excluindo}
+            onPress={handleExcluir}
+          />
+        </View>
       </View>
     </ScreenContainer>
   );

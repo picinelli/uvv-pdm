@@ -1,10 +1,12 @@
 import { StyleSheet } from 'react-native';
 
 import { colors } from '../../theme/colors';
+import { webContentWidth } from '../../utils/webLayout';
 
 export const styles = StyleSheet.create({
   wrapper: {
     marginBottom: 14,
+    ...webContentWidth,
   },
   label: {
     fontSize: 14,
