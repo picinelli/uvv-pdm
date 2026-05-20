@@ -29,7 +29,7 @@ Princípios visuais:
 
 ### Tela 1 — Cadastro de Usuário (obrigatória)
 
-Rota Drawer: `Cadastro`. API: `POST /usuarios`.
+Rota Auth: `Cadastro`. API: `supabase.auth.signUp` (cria a conta em `auth.users`); um trigger no banco cria automaticamente o perfil em `public.usuarios` com nome e telefone vindos de `user_metadata`.
 
 | Componente              | Função                                | Obrigatório | Validação                       |
 | ----------------------- | ------------------------------------- | ----------- | ------------------------------- |
@@ -40,10 +40,26 @@ Rota Drawer: `Cadastro`. API: `POST /usuarios`.
 | `FormTextInput` confirmar | Confirmação de senha                | Sim         | igual à senha                   |
 | `PrimaryButton` Cadastrar | Envia o formulário                  | —           | desabilitado se inválido        |
 | Mensagens de erro       | Feedback por campo                    | —           | Formik + Yup                    |
-| `ActivityIndicator`     | Loading durante POST                  | —           | —                               |
-| Texto de erro de API    | Falha de rede / Supabase              | —           | try/catch + mensagem amigável   |
+| `ActivityIndicator`     | Loading durante o `signUp`            | —           | —                               |
+| Texto de erro de API    | Falha de rede / Supabase Auth         | —           | try/catch + mensagem amigável   |
+| Alert de sucesso        | Avisa que precisa confirmar o e-mail  | —           | exibido após cadastro           |
 
-Justificativa: foco em um único objetivo (cadastrar). Inputs empilhados com labels visíveis (princípio de Nielsen — visibilidade do status). Botão primário fixo abaixo dos campos.
+Justificativa: foco em um único objetivo (cadastrar). A senha **não** é persistida pelo app — fica somente em `auth.users` com hash. Após o cadastro o usuário é direcionado ao Login com a instrução de confirmar o e-mail recebido.
+
+### Tela complementar — Login
+
+Rota Auth: `Login`. API: `supabase.auth.signInWithPassword`.
+
+| Componente                | Função                                       | Validação                       |
+| ------------------------- | -------------------------------------------- | ------------------------------- |
+| `FormTextInput` email     | E-mail cadastrado                            | obrigatório, formato e-mail     |
+| `FormTextInput` senha     | Senha                                        | obrigatório, mínimo 6 caracteres|
+| `PrimaryButton` Entrar    | Autentica via Supabase                       | desabilitado se inválido        |
+| Link "Criar conta"        | Navega para `Cadastro`                       | —                               |
+| Mensagem de sucesso       | Confirma a chegada do cadastro               | aparece se vier de `Cadastro`   |
+| Texto de erro             | "E-mail ou senha inválidos" / "Confirme o e-mail" | tratamento amigável        |
+
+A sessão (JWT) fica em AsyncStorage gerenciada pelo `supabase-js`: ao reabrir o app o usuário continua logado.
 
 ### Tela 2 — Lista de Tarefas
 

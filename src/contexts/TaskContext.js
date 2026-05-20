@@ -1,4 +1,4 @@
-import React, { createContext, useState, useCallback, useMemo, useContext } from 'react';
+import React, { createContext, useState, useEffect, useCallback, useMemo, useContext } from 'react';
 
 import { fetchTasks, createTask as apiCreateTask } from '../services/api';
 import { useUser } from './UserContext';
@@ -36,6 +36,13 @@ export function TaskProvider({ children }) {
     },
     [usuarioId]
   );
+
+  useEffect(() => {
+    if (!usuarioId) {
+      setTarefas([]);
+      setError(null);
+    }
+  }, [usuarioId]);
 
   const value = useMemo(
     () => ({ tarefas, loading, error, carregar, adicionar }),

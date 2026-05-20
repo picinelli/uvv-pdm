@@ -2,22 +2,17 @@ import React from 'react';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 
 import CustomDrawerContent from '../components/CustomDrawerContent';
-import UserRegisterScreen from '../screens/UserRegisterScreen';
 import TaskListScreen from '../screens/TaskListScreen';
 import TaskCreateScreen from '../screens/TaskCreateScreen';
 import TaskDetailScreen from '../screens/TaskDetailScreen';
 import { colors } from '../theme/colors';
-import { useUser } from '../contexts/UserContext';
 
 const Drawer = createDrawerNavigator();
 
 export default function DrawerNavigator() {
-  const { usuario } = useUser();
-  const logado = Boolean(usuario);
-
   return (
     <Drawer.Navigator
-      initialRouteName={logado ? 'Tarefas' : 'Cadastro'}
+      initialRouteName="Tarefas"
       drawerContent={(props) => <CustomDrawerContent {...props} />}
       screenOptions={{
         headerStyle: { backgroundColor: colors.primary },
@@ -30,25 +25,14 @@ export default function DrawerNavigator() {
       }}
     >
       <Drawer.Screen
-        name="Cadastro"
-        component={UserRegisterScreen}
-        options={{ title: 'Cadastro de Usuário' }}
-      />
-      <Drawer.Screen
         name="Tarefas"
         component={TaskListScreen}
-        options={{
-          title: 'Minhas Tarefas',
-          drawerItemStyle: logado ? undefined : { display: 'none' },
-        }}
+        options={{ title: 'Minhas Tarefas' }}
       />
       <Drawer.Screen
         name="NovaTarefa"
         component={TaskCreateScreen}
-        options={{
-          title: 'Nova Tarefa',
-          drawerItemStyle: logado ? undefined : { display: 'none' },
-        }}
+        options={{ title: 'Nova Tarefa' }}
       />
       <Drawer.Screen
         name="DetalheTarefa"

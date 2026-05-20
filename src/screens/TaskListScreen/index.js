@@ -6,7 +6,6 @@ import TaskCard from '../../components/TaskCard';
 import EmptyState from '../../components/EmptyState';
 import PrimaryButton from '../../components/PrimaryButton';
 import { useTasks } from '../../contexts/TaskContext';
-import { useUser } from '../../contexts/UserContext';
 import { colors } from '../../theme/colors';
 import { styles } from './styles';
 
@@ -25,14 +24,13 @@ const OPCOES_PRIORIDADE = [
 ];
 
 export default function TaskListScreen({ navigation }) {
-  const { usuario } = useUser();
   const { tarefas, loading, error, carregar } = useTasks();
   const [filtroStatus, setFiltroStatus] = useState('todos');
   const [filtroPrioridade, setFiltroPrioridade] = useState('todas');
 
   useEffect(() => {
-    if (usuario) carregar();
-  }, [usuario, carregar]);
+    carregar();
+  }, [carregar]);
 
   const tarefasFiltradas = useMemo(() => {
     return tarefas.filter((t) => {
@@ -46,20 +44,6 @@ export default function TaskListScreen({ navigation }) {
     (item) => navigation.navigate('DetalheTarefa', { taskId: item.id }),
     [navigation]
   );
-
-  if (!usuario) {
-    return (
-      <View style={styles.container}>
-        <EmptyState
-          titulo="Você precisa se cadastrar"
-          descricao="Faça seu cadastro para visualizar suas tarefas."
-        />
-        <View style={styles.botaoCadastro}>
-          <PrimaryButton title="Ir para cadastro" onPress={() => navigation.navigate('Cadastro')} />
-        </View>
-      </View>
-    );
-  }
 
   return (
     <View style={styles.container}>

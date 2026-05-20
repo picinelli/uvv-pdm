@@ -6,8 +6,7 @@ import * as Yup from 'yup';
 import ScreenContainer from '../../components/ScreenContainer';
 import FormTextInput from '../../components/FormTextInput';
 import PrimaryButton from '../../components/PrimaryButton';
-import { createUser } from '../../services/api';
-import { useUser } from '../../contexts/UserContext';
+import { signUpUser } from '../../services/api';
 import { styles } from './styles';
 
 const schema = Yup.object({
@@ -33,21 +32,27 @@ const valoresIniciais = {
 };
 
 export default function UserRegisterScreen({ navigation }) {
-  const { setUsuario } = useUser();
   const [erroApi, setErroApi] = useState(null);
 
   async function handleSubmit(values, { setSubmitting, resetForm }) {
     setErroApi(null);
     try {
-      const novo = await createUser({
+      const email = values.email.trim().toLowerCase();
+      const { needsConfirmation } = await signUpUser({
         nome: values.nome.trim(),
-        email: values.email.trim().toLowerCase(),
+        email,
         telefone: values.telefone.trim(),
+        senha: values.senha,
       });
-      setUsuario(novo);
       resetForm();
-      Alert.alert('Cadastro concluído', `Bem-vindo(a), ${novo.nome}!`, [
-        { text: 'Ver tarefas', onPress: () => navigation.navigate('Tarefas') },
+      const mensagem = needsConfirmation
+        ? `Cadastro criado! Enviamos um e-mail de confirmação para ${email}. Confirme antes de fazer login.`
+        : 'Sua conta foi criada. Faça login para continuar.';
+      Alert.alert('Cadastro concluído', mensagem, [
+        {
+          text: 'Ir para login',
+          onPress: () => navigation.navigate('Login', { cadastroOk: true }),
+        },
       ]);
     } catch (e) {
       setErroApi(e.message);

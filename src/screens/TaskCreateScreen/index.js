@@ -7,7 +7,6 @@ import ScreenContainer from '../../components/ScreenContainer';
 import FormTextInput from '../../components/FormTextInput';
 import PickerField from '../../components/PickerField';
 import PrimaryButton from '../../components/PrimaryButton';
-import { useUser } from '../../contexts/UserContext';
 import { useTasks } from '../../contexts/TaskContext';
 import { styles } from './styles';
 
@@ -38,21 +37,8 @@ const valoresIniciais = {
 };
 
 export default function TaskCreateScreen({ navigation }) {
-  const { usuario } = useUser();
   const { adicionar } = useTasks();
   const [erro, setErro] = useState(null);
-
-  if (!usuario) {
-    return (
-      <ScreenContainer>
-        <Text style={styles.titulo}>Nova tarefa</Text>
-        <Text style={styles.aviso}>
-          Você precisa estar cadastrado para criar uma tarefa.
-        </Text>
-        <PrimaryButton title="Ir para cadastro" onPress={() => navigation.navigate('Cadastro')} />
-      </ScreenContainer>
-    );
-  }
 
   async function handleSubmit(values, { setSubmitting, resetForm }) {
     setErro(null);

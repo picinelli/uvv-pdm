@@ -22,13 +22,7 @@ export default function CustomDrawerContent(props) {
       </DrawerContentScrollView>
 
       {usuario ? (
-        <TouchableOpacity
-          style={styles.logout}
-          onPress={() => {
-            logout();
-            props.navigation.navigate('Cadastro');
-          }}
-        >
+        <TouchableOpacity style={styles.logout} onPress={logout}>
           <Text style={styles.logoutText}>Sair</Text>
         </TouchableOpacity>
       ) : null}

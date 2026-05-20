@@ -6,6 +6,7 @@ import PrimaryButton from '../../components/PrimaryButton';
 import { fetchTaskById } from '../../services/api';
 import { colors, statusColors, priorityColors } from '../../theme/colors';
 import { useTasks } from '../../contexts/TaskContext';
+import { useUser } from '../../contexts/UserContext';
 import { styles } from './styles';
 
 const STATUS_LABEL = {
@@ -18,6 +19,7 @@ const PRIORIDADE_LABEL = { baixa: 'Baixa', media: 'Média', alta: 'Alta' };
 export default function TaskDetailScreen({ route, navigation }) {
   const { taskId } = route.params ?? {};
   const { tarefas } = useTasks();
+  const { usuarioId } = useUser();
   const [tarefa, setTarefa] = useState(() => tarefas.find((t) => t.id === taskId) ?? null);
   const [loading, setLoading] = useState(!tarefa);
   const [erro, setErro] = useState(null);
@@ -40,6 +42,13 @@ export default function TaskDetailScreen({ route, navigation }) {
       }
     })();
   }, [taskId, tarefa]);
+
+  useEffect(() => {
+    if (tarefa && usuarioId && tarefa.usuario_id !== usuarioId) {
+      setErro('Você não tem permissão para ver esta tarefa.');
+      setTarefa(null);
+    }
+  }, [tarefa, usuarioId]);
 
   if (loading) {
     return (
