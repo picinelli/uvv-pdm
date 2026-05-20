@@ -19,6 +19,17 @@ export const styles = StyleSheet.create({
     marginBottom: 12,
     fontSize: 14,
   },
+  sucesso: {
+    color: colors.text,
+    backgroundColor: '#ECFDF5',
+    borderWidth: 1,
+    borderColor: colors.secondary,
+    padding: 16,
+    borderRadius: 10,
+    marginBottom: 24,
+    fontSize: 15,
+    lineHeight: 22,
+  },
   botao: {
     marginTop: 6,
   },

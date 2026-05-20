@@ -17,9 +17,16 @@ export async function signUpUser({ nome, email, telefone, senha }) {
     throw new Error(traduzirAuthErro(error));
   }
 
+  const needsConfirmation = !data.session || !data.user?.email_confirmed_at;
+
+  if (needsConfirmation) {
+    await supabase.auth.signOut();
+  }
+
   return {
     user: data.user,
-    needsConfirmation: !data.session,
+    needsConfirmation,
+    email,
   };
 }
 

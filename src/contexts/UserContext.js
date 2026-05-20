@@ -15,6 +15,13 @@ export function UserProvider({ children }) {
       if (montado.current) setUsuario(null);
       return;
     }
+
+    if (!session.user.email_confirmed_at) {
+      await supabase.auth.signOut();
+      if (montado.current) setUsuario(null);
+      return;
+    }
+
     try {
       const perfil = await fetchProfile(session.user.id);
       if (montado.current) setUsuario(perfil);

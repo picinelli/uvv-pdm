@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Text, View, Alert } from 'react-native';
+import { Text, View } from 'react-native';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 
@@ -33,32 +33,43 @@ const valoresIniciais = {
 
 export default function UserRegisterScreen({ navigation }) {
   const [erroApi, setErroApi] = useState(null);
+  const [sucesso, setSucesso] = useState(null);
 
   async function handleSubmit(values, { setSubmitting, resetForm }) {
     setErroApi(null);
+    setSucesso(null);
     try {
       const email = values.email.trim().toLowerCase();
-      const { needsConfirmation } = await signUpUser({
+      await signUpUser({
         nome: values.nome.trim(),
         email,
         telefone: values.telefone.trim(),
         senha: values.senha,
       });
       resetForm();
-      const mensagem = needsConfirmation
-        ? `Cadastro criado! Enviamos um e-mail de confirmação para ${email}. Confirme antes de fazer login.`
-        : 'Sua conta foi criada. Faça login para continuar.';
-      Alert.alert('Cadastro concluído', mensagem, [
-        {
-          text: 'Ir para login',
-          onPress: () => navigation.navigate('Login', { cadastroOk: true }),
-        },
-      ]);
+      setSucesso(
+        `Cadastro criado! Enviamos um e-mail de confirmação para ${email}. Confirme o link antes de fazer login.`,
+      );
     } catch (e) {
       setErroApi(e.message);
     } finally {
       setSubmitting(false);
     }
+  }
+
+  if (sucesso) {
+    return (
+      <ScreenContainer>
+        <Text style={styles.titulo}>Cadastro concluído</Text>
+        <Text style={styles.sucesso}>{sucesso}</Text>
+        <View style={styles.botao}>
+          <PrimaryButton
+            title="Ir para login"
+            onPress={() => navigation.navigate('Login', { cadastroOk: true })}
+          />
+        </View>
+      </ScreenContainer>
+    );
   }
 
   return (
