@@ -1,7 +1,7 @@
 import React, { createContext, useState, useEffect, useMemo, useContext, useCallback, useRef } from 'react';
 
 import { supabase } from '../services/supabase';
-import { fetchProfile, signOutUser } from '../services/api';
+import { ensureProfile, signOutUser } from '../services/api';
 
 export const UserContext = createContext(null);
 
@@ -23,10 +23,10 @@ export function UserProvider({ children }) {
     }
 
     try {
-      const perfil = await fetchProfile(session.user.id);
+      const perfil = await ensureProfile(session.user);
       if (montado.current) setUsuario(perfil);
     } catch (e) {
-      if (__DEV__) console.log('[UserContext] erro ao carregar perfil:', e);
+      if (__DEV__) console.log('[UserContext] erro ao carregar/criar perfil:', e);
       if (montado.current) {
         setUsuario({
           id: session.user.id,

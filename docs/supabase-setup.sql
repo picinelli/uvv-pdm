@@ -75,6 +75,10 @@ create policy "usuarios_select_self"
   on public.usuarios for select to authenticated
   using (id = auth.uid());
 
+create policy "usuarios_insert_self"
+  on public.usuarios for insert to authenticated
+  with check (id = auth.uid());
+
 create policy "usuarios_update_self"
   on public.usuarios for update to authenticated
   using (id = auth.uid())

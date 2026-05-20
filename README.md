@@ -55,6 +55,7 @@ npm install
 
 1. Crie um projeto em [supabase.com](https://supabase.com).
 2. No **SQL Editor**, execute o conteúdo de [`docs/supabase-setup.sql`](docs/supabase-setup.sql).
+   - Se ao criar tarefa aparecer erro `42501` (RLS), execute também [`docs/supabase-fix-rls.sql`](docs/supabase-fix-rls.sql).
    - Cria a tabela `usuarios` ligada a `auth.users` (1-para-1) com um **trigger** que insere o perfil automaticamente após o `signUp`.
    - Cria a tabela `tarefas` e as políticas **RLS baseadas em `auth.uid()`** (cada usuário só vê/cria as próprias tarefas).
    - **Atenção:** o script faz `DROP TABLE` em `usuarios` e `tarefas`. Use apenas em projeto de teste; usuários antigos do esquema "caseiro" precisam se recadastrar.

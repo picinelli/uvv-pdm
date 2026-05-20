@@ -57,10 +57,36 @@ export async function fetchProfile(userId) {
     .from('usuarios')
     .select('id, nome, email, telefone')
     .eq('id', userId)
-    .single();
+    .maybeSingle();
 
   if (error) {
     if (__DEV__) console.log('[fetchProfile] erro:', error);
+    throw new Error(traduzirErro(error));
+  }
+  return data;
+}
+
+export async function ensureProfile(authUser) {
+  if (!authUser?.id) return null;
+
+  const existente = await fetchProfile(authUser.id);
+  if (existente) return existente;
+
+  const novoPerfil = {
+    id: authUser.id,
+    nome: authUser.user_metadata?.nome ?? authUser.email?.split('@')[0] ?? '',
+    email: authUser.email ?? '',
+    telefone: authUser.user_metadata?.telefone ?? null,
+  };
+
+  const { data, error } = await supabase
+    .from('usuarios')
+    .insert([novoPerfil])
+    .select('id, nome, email, telefone')
+    .single();
+
+  if (error) {
+    if (__DEV__) console.log('[ensureProfile] erro ao criar perfil:', error);
     throw new Error(traduzirErro(error));
   }
   return data;
@@ -96,6 +122,21 @@ export async function fetchTaskById(taskId) {
 }
 
 export async function createTask({ titulo, descricao, status, prioridade, usuarioId }) {
+  const {
+    data: { user },
+    error: authError,
+  } = await supabase.auth.getUser();
+
+  if (authError || !user) {
+    throw new Error('Sessão expirada. Faça login novamente.');
+  }
+
+  const usuarioAutenticado = user.id;
+
+  if (usuarioId && usuarioId !== usuarioAutenticado && __DEV__) {
+    console.log('[createTask] usuarioId do contexto difere do auth.uid()', usuarioId, usuarioAutenticado);
+  }
+
   const { data, error } = await supabase
     .from('tarefas')
     .insert([
@@ -104,7 +145,7 @@ export async function createTask({ titulo, descricao, status, prioridade, usuari
         descricao: descricao || null,
         status,
         prioridade,
-        usuario_id: usuarioId,
+        usuario_id: usuarioAutenticado,
       },
     ])
     .select()
@@ -129,6 +170,9 @@ function traduzirAuthErro(error) {
 
 function traduzirErro(error) {
   if (error?.code === '23505') return 'Registro duplicado.';
+  if (error?.code === '42501') {
+    return 'Permissão negada. Execute docs/supabase-fix-rls.sql no Supabase ou faça login novamente.';
+  }
   if (error?.message?.includes('Failed to fetch')) return 'Sem conexão com o servidor.';
   return error?.message || 'Erro inesperado ao acessar a API.';
 }
