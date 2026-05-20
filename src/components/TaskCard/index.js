@@ -2,6 +2,7 @@ import React from 'react';
 import { TouchableOpacity, View, Text } from 'react-native';
 
 import TaskTags from '../TaskTags';
+import CompleteTaskButton from '../CompleteTaskButton';
 import { formatarDataBR, obterDataTarefa } from '../../utils/dates';
 import { styles } from './styles';
 
@@ -9,9 +10,11 @@ export default function TaskCard({
   tarefa,
   onPress,
   onDelete,
+  onConcluir,
   onStatusChange,
   onPrioridadeChange,
   tagsDisabled = false,
+  concluindo = false,
 }) {
   const dataFormatada = formatarDataBR(obterDataTarefa(tarefa));
 
@@ -44,13 +47,24 @@ export default function TaskCard({
         ) : null}
       </TouchableOpacity>
 
-      <View style={styles.tagsWrapper}>
-        <TaskTags
-          tarefa={tarefa}
-          onStatusChange={onStatusChange}
-          onPrioridadeChange={onPrioridadeChange}
-          disabled={tagsDisabled}
-        />
+      <View style={styles.rodape}>
+        <View style={styles.tagsWrapper}>
+          <TaskTags
+            tarefa={tarefa}
+            onStatusChange={onStatusChange}
+            onPrioridadeChange={onPrioridadeChange}
+            disabled={tagsDisabled}
+          />
+        </View>
+        {onConcluir ? (
+          <CompleteTaskButton
+            concluida={tarefa.status === 'concluida'}
+            onPress={onConcluir}
+            loading={concluindo}
+            disabled={tagsDisabled}
+            compact
+          />
+        ) : null}
       </View>
     </View>
   );

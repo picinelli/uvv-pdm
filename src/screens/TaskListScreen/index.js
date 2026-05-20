@@ -137,9 +137,15 @@ export default function TaskListScreen({ navigation }) {
               tarefa={item}
               onPress={() => handleAbrir(item)}
               onDelete={excluindoId === item.id ? undefined : () => handleExcluir(item)}
+              onConcluir={
+                item.status === 'concluida' || excluindoId === item.id
+                  ? undefined
+                  : () => handleAtualizarCampo(item, { status: 'concluida' })
+              }
               onStatusChange={(status) => handleAtualizarCampo(item, { status })}
               onPrioridadeChange={(prioridade) => handleAtualizarCampo(item, { prioridade })}
               tagsDisabled={atualizandoId === item.id || excluindoId === item.id}
+              concluindo={atualizandoId === item.id}
             />
           )}
           contentContainerStyle={styles.lista}

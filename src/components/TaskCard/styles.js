@@ -44,7 +44,14 @@ export const styles = StyleSheet.create({
     marginBottom: 10,
     fontSize: 14,
   },
-  tagsWrapper: {
+  rodape: {
+    flexDirection: 'row',
+    alignItems: 'flex-end',
+    justifyContent: 'space-between',
     marginTop: 10,
+    gap: 8,
+  },
+  tagsWrapper: {
+    flex: 1,
   },
 });

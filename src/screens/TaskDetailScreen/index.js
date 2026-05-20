@@ -3,6 +3,7 @@ import { View, Text, ActivityIndicator, Alert } from 'react-native';
 
 import ScreenContainer from '../../components/ScreenContainer';
 import PrimaryButton from '../../components/PrimaryButton';
+import CompleteTaskButton from '../../components/CompleteTaskButton';
 import TaskTags from '../../components/TaskTags';
 import { fetchTaskById } from '../../services/api';
 import { colors } from '../../theme/colors';
@@ -152,6 +153,12 @@ export default function TaskDetailScreen({ route, navigation }) {
         </Text>
 
         <View style={styles.botoes}>
+          <CompleteTaskButton
+            concluida={tarefa.status === 'concluida'}
+            onPress={() => handleAtualizarCampo({ status: 'concluida' })}
+            loading={atualizando}
+            disabled={atualizando || excluindo}
+          />
           <PrimaryButton title="Voltar para a lista" onPress={() => navigation.goBack()} />
           <PrimaryButton
             title="Excluir tarefa"
