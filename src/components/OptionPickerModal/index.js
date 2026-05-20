@@ -12,19 +12,29 @@ import {
 
 import { colors } from '../../theme/colors';
 
+const MAX_LARGURA_DIALOGO = 420;
+
 const styles = StyleSheet.create({
   overlay: {
     flex: 1,
-    backgroundColor: 'rgba(15, 23, 42, 0.45)',
-    justifyContent: 'flex-end',
+    backgroundColor: 'rgba(15, 23, 42, 0.55)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
   },
-  sheet: {
+  dialogo: {
+    width: '100%',
+    maxWidth: MAX_LARGURA_DIALOGO,
     backgroundColor: colors.surface,
-    borderTopLeftRadius: 16,
-    borderTopRightRadius: 16,
+    borderRadius: 16,
     paddingTop: 20,
     paddingHorizontal: 20,
-    paddingBottom: 28,
+    paddingBottom: 16,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.18,
+    shadowRadius: 18,
+    elevation: 8,
   },
   titulo: {
     fontSize: 17,
@@ -36,7 +46,7 @@ const styles = StyleSheet.create({
     flexGrow: 0,
   },
   opcao: {
-    paddingVertical: 14,
+    paddingVertical: 12,
     paddingHorizontal: 12,
     borderRadius: 10,
     marginBottom: 4,
@@ -54,7 +64,7 @@ const styles = StyleSheet.create({
   },
   cancelar: {
     marginTop: 8,
-    paddingVertical: 14,
+    paddingVertical: 12,
     alignItems: 'center',
   },
   cancelarTexto: {
@@ -73,14 +83,15 @@ export default function OptionPickerModal({
   onClose,
 }) {
   const { height } = useWindowDimensions();
+  const alturaLista = Math.min(options.length * 48, height * 0.55);
 
   return (
     <Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
       <Pressable style={styles.overlay} onPress={onClose}>
-        <View style={styles.sheet} onStartShouldSetResponder={() => true}>
+        <View style={styles.dialogo} onStartShouldSetResponder={() => true}>
           <Text style={styles.titulo}>{title}</Text>
           <ScrollView
-            style={[styles.lista, { maxHeight: height * 0.45 }]}
+            style={[styles.lista, { maxHeight: alturaLista }]}
             keyboardShouldPersistTaps="handled"
             showsVerticalScrollIndicator
           >
