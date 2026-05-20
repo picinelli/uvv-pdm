@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Text, View, Alert } from 'react-native';
+import { Text, View } from 'react-native';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 
@@ -9,6 +9,7 @@ import PickerField from '../../components/PickerField';
 import PrimaryButton from '../../components/PrimaryButton';
 import { OPCOES_STATUS, OPCOES_PRIORIDADE } from '../../constants/taskOptions';
 import { gerarOpcoesDataTarefa, hojeISO } from '../../utils/dates';
+import { showAlert } from '../../utils/alert';
 import { useTasks } from '../../contexts/TaskContext';
 import { styles } from './styles';
 
@@ -45,7 +46,7 @@ export default function TaskCreateScreen({ navigation }) {
         prioridade: values.prioridade,
       });
       resetForm();
-      Alert.alert('Tarefa criada', 'Sua tarefa foi salva com sucesso.', [
+      showAlert('Tarefa criada', 'Sua tarefa foi salva com sucesso.', [
         { text: 'Ver tarefas', onPress: () => navigation.navigate('Tarefas') },
       ]);
     } catch (e) {

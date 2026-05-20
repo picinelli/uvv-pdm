@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState, useCallback } from 'react';
-import { View, FlatList, Text, RefreshControl, ActivityIndicator, Alert } from 'react-native';
+import { View, FlatList, Text, RefreshControl, ActivityIndicator } from 'react-native';
 
 import PickerField from '../../components/PickerField';
 import DateFilterCalendar from '../../components/DateFilterCalendar';
@@ -8,6 +8,8 @@ import EmptyState from '../../components/EmptyState';
 import PrimaryButton from '../../components/PrimaryButton';
 import { useTasks } from '../../contexts/TaskContext';
 import { hojeISO, obterDataTarefa, tarefaNaData, formatarDataBR } from '../../utils/dates';
+import { showAlert } from '../../utils/alert';
+import { notificarTarefaConcluida } from '../../utils/taskFeedback';
 import { colors } from '../../theme/colors';
 import { styles } from './styles';
 
@@ -58,7 +60,7 @@ export default function TaskListScreen({ navigation }) {
 
   const handleExcluir = useCallback(
     (item) => {
-      Alert.alert(
+      showAlert(
         'Excluir tarefa',
         `Deseja excluir "${item.titulo}"? Esta ação não pode ser desfeita.`,
         [
@@ -71,7 +73,7 @@ export default function TaskListScreen({ navigation }) {
               try {
                 await excluir(item.id);
               } catch (e) {
-                Alert.alert('Erro', e.message);
+                showAlert('Erro', e.message);
               } finally {
                 setExcluindoId(null);
               }
@@ -85,11 +87,13 @@ export default function TaskListScreen({ navigation }) {
 
   const handleAtualizarCampo = useCallback(
     async (item, patch) => {
+      const statusAnterior = item.status;
       setAtualizandoId(item.id);
       try {
         await atualizar(item.id, patch);
+        notificarTarefaConcluida(statusAnterior, patch.status);
       } catch (e) {
-        Alert.alert('Erro', e.message);
+        showAlert('Erro', e.message);
       } finally {
         setAtualizandoId(null);
       }

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, ActivityIndicator, Alert } from 'react-native';
+import { View, Text, ActivityIndicator } from 'react-native';
 
 import ScreenContainer from '../../components/ScreenContainer';
 import PrimaryButton from '../../components/PrimaryButton';
@@ -10,6 +10,8 @@ import { colors } from '../../theme/colors';
 import { useTasks } from '../../contexts/TaskContext';
 import { useUser } from '../../contexts/UserContext';
 import { formatarDataBR, obterDataTarefa } from '../../utils/dates';
+import { showAlert } from '../../utils/alert';
+import { notificarTarefaConcluida } from '../../utils/taskFeedback';
 import { styles } from './styles';
 
 export default function TaskDetailScreen({ route, navigation }) {
@@ -97,19 +99,21 @@ export default function TaskDetailScreen({ route, navigation }) {
     : '';
 
   const handleAtualizarCampo = async (patch) => {
+    const statusAnterior = tarefa.status;
     setAtualizando(true);
     try {
       const atualizada = await atualizar(tarefa.id, patch);
       if (atualizada) setTarefa(atualizada);
+      notificarTarefaConcluida(statusAnterior, patch.status);
     } catch (e) {
-      Alert.alert('Erro', e.message);
+      showAlert('Erro', e.message);
     } finally {
       setAtualizando(false);
     }
   };
 
   const handleExcluir = () => {
-    Alert.alert(
+    showAlert(
       'Excluir tarefa',
       `Deseja excluir "${tarefa.titulo}"? Esta ação não pode ser desfeita.`,
       [
@@ -123,7 +127,7 @@ export default function TaskDetailScreen({ route, navigation }) {
               await excluir(tarefa.id);
               navigation.navigate('Tarefas');
             } catch (e) {
-              Alert.alert('Erro', e.message);
+              showAlert('Erro', e.message);
             } finally {
               setExcluindo(false);
             }
