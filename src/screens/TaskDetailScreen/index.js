@@ -3,27 +3,22 @@ import { View, Text, ActivityIndicator, Alert } from 'react-native';
 
 import ScreenContainer from '../../components/ScreenContainer';
 import PrimaryButton from '../../components/PrimaryButton';
+import TaskTags from '../../components/TaskTags';
 import { fetchTaskById } from '../../services/api';
-import { colors, statusColors, priorityColors } from '../../theme/colors';
+import { colors } from '../../theme/colors';
 import { useTasks } from '../../contexts/TaskContext';
 import { useUser } from '../../contexts/UserContext';
 import { styles } from './styles';
 
-const STATUS_LABEL = {
-  pendente: 'Pendente',
-  em_andamento: 'Em andamento',
-  concluida: 'Concluída',
-};
-const PRIORIDADE_LABEL = { baixa: 'Baixa', media: 'Média', alta: 'Alta' };
-
 export default function TaskDetailScreen({ route, navigation }) {
   const { taskId } = route.params ?? {};
-  const { tarefas, excluir } = useTasks();
+  const { tarefas, excluir, atualizar } = useTasks();
   const { usuarioId } = useUser();
   const [tarefa, setTarefa] = useState(null);
   const [loading, setLoading] = useState(true);
   const [erro, setErro] = useState(null);
   const [excluindo, setExcluindo] = useState(false);
+  const [atualizando, setAtualizando] = useState(false);
 
   useEffect(() => {
     if (!taskId) {
@@ -94,6 +89,18 @@ export default function TaskDetailScreen({ route, navigation }) {
     ? new Date(tarefa.created_at).toLocaleString('pt-BR')
     : '';
 
+  const handleAtualizarCampo = async (patch) => {
+    setAtualizando(true);
+    try {
+      const atualizada = await atualizar(tarefa.id, patch);
+      if (atualizada) setTarefa(atualizada);
+    } catch (e) {
+      Alert.alert('Erro', e.message);
+    } finally {
+      setAtualizando(false);
+    }
+  };
+
   const handleExcluir = () => {
     Alert.alert(
       'Excluir tarefa',
@@ -124,16 +131,12 @@ export default function TaskDetailScreen({ route, navigation }) {
       <Text style={styles.titulo}>{tarefa.titulo}</Text>
       <Text style={styles.data}>Criada em {dataFormatada}</Text>
 
-      <View style={styles.tagsRow}>
-        <View style={[styles.tag, { backgroundColor: statusColors[tarefa.status] }]}>
-          <Text style={styles.tagText}>{STATUS_LABEL[tarefa.status] ?? tarefa.status}</Text>
-        </View>
-        <View style={[styles.tag, { backgroundColor: priorityColors[tarefa.prioridade] }]}>
-          <Text style={styles.tagText}>
-            {PRIORIDADE_LABEL[tarefa.prioridade] ?? tarefa.prioridade}
-          </Text>
-        </View>
-      </View>
+      <TaskTags
+        tarefa={tarefa}
+        onStatusChange={(status) => handleAtualizarCampo({ status })}
+        onPrioridadeChange={(prioridade) => handleAtualizarCampo({ prioridade })}
+        disabled={atualizando || excluindo}
+      />
 
       <Text style={styles.label}>Descrição</Text>
       <Text style={styles.descricao}>

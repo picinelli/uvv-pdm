@@ -167,6 +167,26 @@ export async function deleteTask(taskId) {
   }
 }
 
+export async function updateTask(taskId, { status, prioridade }) {
+  const patch = {};
+  if (status !== undefined) patch.status = status;
+  if (prioridade !== undefined) patch.prioridade = prioridade;
+  if (Object.keys(patch).length === 0) return null;
+
+  const { data, error } = await supabase
+    .from('tarefas')
+    .update(patch)
+    .eq('id', taskId)
+    .select()
+    .single();
+
+  if (error) {
+    if (__DEV__) console.log('[updateTask] erro:', error);
+    throw new Error(traduzirErro(error));
+  }
+  return data;
+}
+
 function traduzirAuthErro(error) {
   const msg = error?.message || '';
   if (msg.includes('Invalid login credentials')) return 'E-mail ou senha inválidos.';

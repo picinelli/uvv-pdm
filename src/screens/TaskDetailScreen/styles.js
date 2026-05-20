@@ -14,25 +14,11 @@ export const styles = StyleSheet.create({
     color: colors.textMuted,
     marginBottom: 16,
   },
-  tagsRow: {
-    flexDirection: 'row',
-    gap: 8,
-    marginBottom: 20,
-  },
-  tag: {
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 999,
-  },
-  tagText: {
-    color: '#FFFFFF',
-    fontSize: 13,
-    fontWeight: '600',
-  },
   label: {
     fontSize: 14,
     fontWeight: '700',
     color: colors.text,
+    marginTop: 20,
     marginBottom: 6,
   },
   descricao: {

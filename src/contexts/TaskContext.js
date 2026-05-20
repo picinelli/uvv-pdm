@@ -1,6 +1,11 @@
 import React, { createContext, useState, useEffect, useCallback, useMemo, useContext } from 'react';
 
-import { fetchTasks, createTask as apiCreateTask, deleteTask as apiDeleteTask } from '../services/api';
+import {
+  fetchTasks,
+  createTask as apiCreateTask,
+  deleteTask as apiDeleteTask,
+  updateTask as apiUpdateTask,
+} from '../services/api';
 import { useUser } from './UserContext';
 
 export const TaskContext = createContext(null);
@@ -42,6 +47,13 @@ export function TaskProvider({ children }) {
     setTarefas((prev) => prev.filter((t) => t.id !== taskId));
   }, []);
 
+  const atualizar = useCallback(async (taskId, patch) => {
+    const atualizada = await apiUpdateTask(taskId, patch);
+    if (!atualizada) return null;
+    setTarefas((prev) => prev.map((t) => (t.id === taskId ? atualizada : t)));
+    return atualizada;
+  }, []);
+
   useEffect(() => {
     if (!usuarioId) {
       setTarefas([]);
@@ -50,8 +62,8 @@ export function TaskProvider({ children }) {
   }, [usuarioId]);
 
   const value = useMemo(
-    () => ({ tarefas, loading, error, carregar, adicionar, excluir }),
-    [tarefas, loading, error, carregar, adicionar, excluir]
+    () => ({ tarefas, loading, error, carregar, adicionar, excluir, atualizar }),
+    [tarefas, loading, error, carregar, adicionar, excluir, atualizar]
   );
 
   return <TaskContext.Provider value={value}>{children}</TaskContext.Provider>;

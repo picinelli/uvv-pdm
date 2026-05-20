@@ -7,20 +7,9 @@ import ScreenContainer from '../../components/ScreenContainer';
 import FormTextInput from '../../components/FormTextInput';
 import PickerField from '../../components/PickerField';
 import PrimaryButton from '../../components/PrimaryButton';
+import { OPCOES_STATUS, OPCOES_PRIORIDADE } from '../../constants/taskOptions';
 import { useTasks } from '../../contexts/TaskContext';
 import { styles } from './styles';
-
-const OPCOES_STATUS = [
-  { label: 'Pendente', value: 'pendente' },
-  { label: 'Em andamento', value: 'em_andamento' },
-  { label: 'Concluída', value: 'concluida' },
-];
-
-const OPCOES_PRIORIDADE = [
-  { label: 'Baixa', value: 'baixa' },
-  { label: 'Média', value: 'media' },
-  { label: 'Alta', value: 'alta' },
-];
 
 const schema = Yup.object({
   titulo: Yup.string().trim().min(3, 'Mínimo de 3 caracteres').required('Informe um título'),

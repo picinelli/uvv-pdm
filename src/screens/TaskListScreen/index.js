@@ -24,10 +24,11 @@ const OPCOES_PRIORIDADE = [
 ];
 
 export default function TaskListScreen({ navigation }) {
-  const { tarefas, loading, error, carregar, excluir } = useTasks();
+  const { tarefas, loading, error, carregar, excluir, atualizar } = useTasks();
   const [filtroStatus, setFiltroStatus] = useState('todos');
   const [filtroPrioridade, setFiltroPrioridade] = useState('todas');
   const [excluindoId, setExcluindoId] = useState(null);
+  const [atualizandoId, setAtualizandoId] = useState(null);
 
   useEffect(() => {
     carregar();
@@ -73,6 +74,20 @@ export default function TaskListScreen({ navigation }) {
     [excluir]
   );
 
+  const handleAtualizarCampo = useCallback(
+    async (item, patch) => {
+      setAtualizandoId(item.id);
+      try {
+        await atualizar(item.id, patch);
+      } catch (e) {
+        Alert.alert('Erro', e.message);
+      } finally {
+        setAtualizandoId(null);
+      }
+    },
+    [atualizar]
+  );
+
   return (
     <View style={styles.container}>
       <View style={styles.filtros}>
@@ -103,6 +118,9 @@ export default function TaskListScreen({ navigation }) {
               tarefa={item}
               onPress={() => handleAbrir(item)}
               onDelete={excluindoId === item.id ? undefined : () => handleExcluir(item)}
+              onStatusChange={(status) => handleAtualizarCampo(item, { status })}
+              onPrioridadeChange={(prioridade) => handleAtualizarCampo(item, { prioridade })}
+              tagsDisabled={atualizandoId === item.id || excluindoId === item.id}
             />
           )}
           contentContainerStyle={styles.lista}
