@@ -6,6 +6,7 @@ import {
   deleteTask as apiDeleteTask,
   updateTask as apiUpdateTask,
 } from '../services/api';
+import { ordenarTarefasPorData } from '../utils/dates';
 import { useUser } from './UserContext';
 
 export const TaskContext = createContext(null);
@@ -36,7 +37,7 @@ export function TaskProvider({ children }) {
   const adicionar = useCallback(
     async (payload) => {
       const nova = await apiCreateTask({ ...payload, usuarioId });
-      setTarefas((prev) => [nova, ...prev]);
+      setTarefas((prev) => ordenarTarefasPorData([nova, ...prev]));
       return nova;
     },
     [usuarioId]
@@ -50,7 +51,7 @@ export function TaskProvider({ children }) {
   const atualizar = useCallback(async (taskId, patch) => {
     const atualizada = await apiUpdateTask(taskId, patch);
     if (!atualizada) return null;
-    setTarefas((prev) => prev.map((t) => (t.id === taskId ? atualizada : t)));
+    setTarefas((prev) => ordenarTarefasPorData(prev.map((t) => (t.id === taskId ? atualizada : t))));
     return atualizada;
   }, []);
 

@@ -22,8 +22,14 @@ export function obterDataTarefa(tarefa) {
   return hojeISO();
 }
 
+function pesoStatus(status) {
+  return status === 'concluida' ? 1 : 0;
+}
+
 export function ordenarTarefasPorData(tarefas) {
   return [...tarefas].sort((a, b) => {
+    const cmpStatus = pesoStatus(a.status) - pesoStatus(b.status);
+    if (cmpStatus !== 0) return cmpStatus;
     const cmpData = obterDataTarefa(a).localeCompare(obterDataTarefa(b));
     if (cmpData !== 0) return cmpData;
     return (b.created_at ?? '').localeCompare(a.created_at ?? '');

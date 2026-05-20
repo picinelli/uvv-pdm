@@ -7,7 +7,13 @@ import TaskCard from '../../components/TaskCard';
 import EmptyState from '../../components/EmptyState';
 import PrimaryButton from '../../components/PrimaryButton';
 import { useTasks } from '../../contexts/TaskContext';
-import { hojeISO, obterDataTarefa, tarefaNaData, formatarDataBR } from '../../utils/dates';
+import {
+  hojeISO,
+  obterDataTarefa,
+  tarefaNaData,
+  formatarDataBR,
+  ordenarTarefasPorData,
+} from '../../utils/dates';
 import { showAlert } from '../../utils/alert';
 import { notificarTarefaConcluida } from '../../utils/taskFeedback';
 import { colors } from '../../theme/colors';
@@ -45,12 +51,13 @@ export default function TaskListScreen({ navigation }) {
   );
 
   const tarefasFiltradas = useMemo(() => {
-    return tarefas.filter((t) => {
+    const filtradas = tarefas.filter((t) => {
       const dataOk = tarefaNaData(t, dataSelecionada);
       const statusOk = filtroStatus === 'todos' || t.status === filtroStatus;
       const prioridadeOk = filtroPrioridade === 'todas' || t.prioridade === filtroPrioridade;
       return dataOk && statusOk && prioridadeOk;
     });
+    return ordenarTarefasPorData(filtradas);
   }, [tarefas, dataSelecionada, filtroStatus, filtroPrioridade]);
 
   const handleAbrir = useCallback(
