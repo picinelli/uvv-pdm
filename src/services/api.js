@@ -1,3 +1,4 @@
+import { hojeISO, ordenarTarefasPorData } from '../utils/dates';
 import { supabase } from './supabase';
 
 export async function signUpUser({ nome, email, telefone, senha }) {
@@ -104,7 +105,7 @@ export async function fetchTasks(usuarioId) {
     if (__DEV__) console.log('[fetchTasks] erro:', error);
     throw new Error(traduzirErro(error));
   }
-  return data ?? [];
+  return ordenarTarefasPorData(data ?? []);
 }
 
 export async function fetchTaskById(taskId) {
@@ -121,7 +122,7 @@ export async function fetchTaskById(taskId) {
   return data;
 }
 
-export async function createTask({ titulo, descricao, status, prioridade, usuarioId }) {
+export async function createTask({ titulo, descricao, status, prioridade, dataTarefa, usuarioId }) {
   const {
     data: { user },
     error: authError,
@@ -145,6 +146,7 @@ export async function createTask({ titulo, descricao, status, prioridade, usuari
         descricao: descricao || null,
         status,
         prioridade,
+        data_tarefa: dataTarefa || hojeISO(),
         usuario_id: usuarioAutenticado,
       },
     ])

@@ -2,10 +2,12 @@ import React, { useEffect, useMemo, useState, useCallback } from 'react';
 import { View, FlatList, Text, RefreshControl, ActivityIndicator, Alert } from 'react-native';
 
 import PickerField from '../../components/PickerField';
+import DateFilterCalendar from '../../components/DateFilterCalendar';
 import TaskCard from '../../components/TaskCard';
 import EmptyState from '../../components/EmptyState';
 import PrimaryButton from '../../components/PrimaryButton';
 import { useTasks } from '../../contexts/TaskContext';
+import { hojeISO, obterDataTarefa, tarefaNaData, formatarDataBR } from '../../utils/dates';
 import { colors } from '../../theme/colors';
 import { styles } from './styles';
 
@@ -25,6 +27,7 @@ const OPCOES_PRIORIDADE = [
 
 export default function TaskListScreen({ navigation }) {
   const { tarefas, loading, error, carregar, excluir, atualizar } = useTasks();
+  const [dataSelecionada, setDataSelecionada] = useState(hojeISO);
   const [filtroStatus, setFiltroStatus] = useState('todos');
   const [filtroPrioridade, setFiltroPrioridade] = useState('todas');
   const [excluindoId, setExcluindoId] = useState(null);
@@ -34,13 +37,19 @@ export default function TaskListScreen({ navigation }) {
     carregar();
   }, [carregar]);
 
+  const datasComTarefas = useMemo(
+    () => tarefas.map((t) => obterDataTarefa(t)),
+    [tarefas]
+  );
+
   const tarefasFiltradas = useMemo(() => {
     return tarefas.filter((t) => {
+      const dataOk = tarefaNaData(t, dataSelecionada);
       const statusOk = filtroStatus === 'todos' || t.status === filtroStatus;
       const prioridadeOk = filtroPrioridade === 'todas' || t.prioridade === filtroPrioridade;
-      return statusOk && prioridadeOk;
+      return dataOk && statusOk && prioridadeOk;
     });
-  }, [tarefas, filtroStatus, filtroPrioridade]);
+  }, [tarefas, dataSelecionada, filtroStatus, filtroPrioridade]);
 
   const handleAbrir = useCallback(
     (item) => navigation.navigate('DetalheTarefa', { taskId: item.id }),
@@ -88,31 +97,41 @@ export default function TaskListScreen({ navigation }) {
     [atualizar]
   );
 
+  const cabecalhoLista = (
+    <View style={styles.filtros}>
+      <DateFilterCalendar
+        selectedDate={dataSelecionada}
+        onSelectDate={setDataSelecionada}
+        markedDates={datasComTarefas}
+      />
+      <PickerField
+        label="Status"
+        value={filtroStatus}
+        onValueChange={setFiltroStatus}
+        options={OPCOES_STATUS}
+      />
+      <PickerField
+        label="Prioridade"
+        value={filtroPrioridade}
+        onValueChange={setFiltroPrioridade}
+        options={OPCOES_PRIORIDADE}
+      />
+      {error ? <Text style={styles.erro}>{error}</Text> : null}
+    </View>
+  );
+
   return (
     <View style={styles.container}>
-      <View style={styles.filtros}>
-        <PickerField
-          label="Status"
-          value={filtroStatus}
-          onValueChange={setFiltroStatus}
-          options={OPCOES_STATUS}
-        />
-        <PickerField
-          label="Prioridade"
-          value={filtroPrioridade}
-          onValueChange={setFiltroPrioridade}
-          options={OPCOES_PRIORIDADE}
-        />
-      </View>
-
-      {error ? <Text style={styles.erro}>{error}</Text> : null}
-
       {loading && tarefas.length === 0 ? (
-        <ActivityIndicator size="large" color={colors.primary} style={styles.loading} />
+        <View style={styles.carregando}>
+          {cabecalhoLista}
+          <ActivityIndicator size="large" color={colors.primary} style={styles.loading} />
+        </View>
       ) : (
         <FlatList
           data={tarefasFiltradas}
           keyExtractor={(item) => item.id}
+          ListHeaderComponent={cabecalhoLista}
           renderItem={({ item }) => (
             <TaskCard
               tarefa={item}
@@ -124,6 +143,7 @@ export default function TaskListScreen({ navigation }) {
             />
           )}
           contentContainerStyle={styles.lista}
+          style={styles.listaFlex}
           refreshControl={
             <RefreshControl refreshing={loading} onRefresh={carregar} colors={[colors.primary]} />
           }
@@ -133,7 +153,7 @@ export default function TaskListScreen({ navigation }) {
               descricao={
                 tarefas.length === 0
                   ? 'Crie sua primeira tarefa no menu Nova Tarefa.'
-                  : 'Ajuste os filtros para ver outras tarefas.'
+                  : `Não há tarefas em ${formatarDataBR(dataSelecionada)}. Selecione outro dia no calendário ou crie uma nova tarefa.`
               }
             />
           }

@@ -54,11 +54,13 @@ create table public.tarefas (
     check (status in ('pendente','em_andamento','concluida')),
   prioridade text not null default 'media'
     check (prioridade in ('baixa','media','alta')),
+  data_tarefa date not null default current_date,
   usuario_id uuid not null references public.usuarios(id) on delete cascade,
   created_at timestamptz not null default now()
 );
 
 create index tarefas_usuario_id_idx on public.tarefas (usuario_id);
+create index tarefas_usuario_data_tarefa_idx on public.tarefas (usuario_id, data_tarefa);
 
 -- 5) RLS baseada em auth.uid() (usuario so ve/cria os proprios dados)
 alter table public.usuarios enable row level security;

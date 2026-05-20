@@ -2,6 +2,7 @@ import React from 'react';
 import { TouchableOpacity, View, Text } from 'react-native';
 
 import TaskTags from '../TaskTags';
+import { formatarDataBR, obterDataTarefa } from '../../utils/dates';
 import { styles } from './styles';
 
 export default function TaskCard({
@@ -12,9 +13,7 @@ export default function TaskCard({
   onPrioridadeChange,
   tagsDisabled = false,
 }) {
-  const dataFormatada = tarefa.created_at
-    ? new Date(tarefa.created_at).toLocaleDateString('pt-BR')
-    : '';
+  const dataFormatada = formatarDataBR(obterDataTarefa(tarefa));
 
   return (
     <View style={styles.card}>

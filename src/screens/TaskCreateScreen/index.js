@@ -8,12 +8,16 @@ import FormTextInput from '../../components/FormTextInput';
 import PickerField from '../../components/PickerField';
 import PrimaryButton from '../../components/PrimaryButton';
 import { OPCOES_STATUS, OPCOES_PRIORIDADE } from '../../constants/taskOptions';
+import { gerarOpcoesDataTarefa, hojeISO } from '../../utils/dates';
 import { useTasks } from '../../contexts/TaskContext';
 import { styles } from './styles';
+
+const OPCOES_DATA = gerarOpcoesDataTarefa();
 
 const schema = Yup.object({
   titulo: Yup.string().trim().min(3, 'Mínimo de 3 caracteres').required('Informe um título'),
   descricao: Yup.string().notRequired(),
+  data: Yup.string().required('Informe a data da tarefa'),
   status: Yup.string().oneOf(['pendente', 'em_andamento', 'concluida']).required(),
   prioridade: Yup.string().oneOf(['baixa', 'media', 'alta']).required(),
 });
@@ -21,6 +25,7 @@ const schema = Yup.object({
 const valoresIniciais = {
   titulo: '',
   descricao: '',
+  data: hojeISO(),
   status: 'pendente',
   prioridade: 'media',
 };
@@ -35,6 +40,7 @@ export default function TaskCreateScreen({ navigation }) {
       await adicionar({
         titulo: values.titulo.trim(),
         descricao: values.descricao.trim(),
+        dataTarefa: values.data,
         status: values.status,
         prioridade: values.prioridade,
       });
@@ -89,6 +95,13 @@ export default function TaskCreateScreen({ navigation }) {
               touched={touched.descricao}
               multiline
               autoCapitalize="sentences"
+            />
+
+            <PickerField
+              label="Data *"
+              value={values.data}
+              onValueChange={(v) => setFieldValue('data', v)}
+              options={OPCOES_DATA}
             />
 
             <PickerField

@@ -10,10 +10,18 @@ export const styles = StyleSheet.create({
     paddingTop: 16,
   },
   filtros: {
-    marginBottom: 8,
+    marginBottom: 4,
+  },
+  listaFlex: {
+    flex: 1,
   },
   lista: {
+    flexGrow: 1,
     paddingBottom: 100,
+  },
+  carregando: {
+    flex: 1,
+    paddingHorizontal: 0,
   },
   loading: {
     marginTop: 40,

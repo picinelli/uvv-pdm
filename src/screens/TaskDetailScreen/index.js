@@ -8,6 +8,7 @@ import { fetchTaskById } from '../../services/api';
 import { colors } from '../../theme/colors';
 import { useTasks } from '../../contexts/TaskContext';
 import { useUser } from '../../contexts/UserContext';
+import { formatarDataBR, obterDataTarefa } from '../../utils/dates';
 import { styles } from './styles';
 
 export default function TaskDetailScreen({ route, navigation }) {
@@ -85,7 +86,8 @@ export default function TaskDetailScreen({ route, navigation }) {
     );
   }
 
-  const dataFormatada = tarefa.created_at
+  const dataTarefa = formatarDataBR(obterDataTarefa(tarefa));
+  const criadaEm = tarefa.created_at
     ? new Date(tarefa.created_at).toLocaleString('pt-BR')
     : '';
 
@@ -129,7 +131,8 @@ export default function TaskDetailScreen({ route, navigation }) {
   return (
     <ScreenContainer>
       <Text style={styles.titulo}>{tarefa.titulo}</Text>
-      <Text style={styles.data}>Criada em {dataFormatada}</Text>
+      <Text style={styles.data}>Data da tarefa: {dataTarefa}</Text>
+      {criadaEm ? <Text style={styles.data}>Criada em {criadaEm}</Text> : null}
 
       <TaskTags
         tarefa={tarefa}
