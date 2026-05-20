@@ -19,16 +19,4 @@ export const styles = StyleSheet.create({
   outline: {
     borderRadius: 12,
   },
-  campoNativo: {
-    position: 'relative',
-  },
-  pickerSobreposto: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    opacity: Platform.OS === 'ios' ? 1 : 0.02,
-    color: 'transparent',
-  },
 });

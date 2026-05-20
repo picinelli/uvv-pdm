@@ -1,19 +1,21 @@
 import React, { useState, useCallback } from 'react';
 import { View, Platform, Pressable } from 'react-native';
-import { Picker } from '@react-native-picker/picker';
 import { TextInput, HelperText, Menu } from 'react-native-paper';
 
+import OptionPickerModal from '../OptionPickerModal';
 import { styles } from './styles';
 
+const LIMITE_OPCOES_MENU = 12;
+
 export default function PickerField({ label, value, onValueChange, options, error, touched }) {
-  const [menuAberto, setMenuAberto] = useState(false);
+  const [aberto, setAberto] = useState(false);
   const [larguraCampo, setLarguraCampo] = useState(null);
   const showError = Boolean(touched && error);
   const rotuloAtual = options.find((opt) => opt.value === value)?.label ?? '';
+  const usarModal = options.length > LIMITE_OPCOES_MENU;
 
-  const usarMenu = Platform.OS === 'web' || options.length <= 12;
-
-  const abrirMenu = () => setMenuAberto(true);
+  const abrir = () => setAberto(true);
+  const fechar = () => setAberto(false);
 
   const handleLayoutCampo = useCallback((event) => {
     const { width } = event.nativeEvent.layout;
@@ -27,10 +29,11 @@ export default function PickerField({ label, value, onValueChange, options, erro
 
   const campoLeitura = (
     <Pressable
-      onPress={abrirMenu}
+      onPress={abrir}
       onLayout={handleLayoutCampo}
       style={styles.areaClicavel}
       accessibilityRole="button"
+      accessibilityLabel={label}
     >
       <TextInput
         mode="outlined"
@@ -47,27 +50,21 @@ export default function PickerField({ label, value, onValueChange, options, erro
     </Pressable>
   );
 
-  if (usarMenu) {
+  if (usarModal) {
     return (
       <View style={styles.wrapper}>
-        <Menu
-          visible={menuAberto}
-          onDismiss={() => setMenuAberto(false)}
-          anchor={campoLeitura}
-          style={estiloLarguraMenu}
-          contentStyle={estiloLarguraMenu}
-        >
-          {options.map((opt) => (
-            <Menu.Item
-              key={opt.value}
-              title={opt.label}
-              onPress={() => {
-                onValueChange(opt.value);
-                setMenuAberto(false);
-              }}
-            />
-          ))}
-        </Menu>
+        {campoLeitura}
+        <OptionPickerModal
+          visible={aberto}
+          title={label}
+          options={options}
+          selectedValue={value}
+          onSelect={(v) => {
+            onValueChange(v);
+            fechar();
+          }}
+          onClose={fechar}
+        />
         {showError ? (
           <HelperText type="error" visible={showError}>
             {error}
@@ -79,29 +76,24 @@ export default function PickerField({ label, value, onValueChange, options, erro
 
   return (
     <View style={styles.wrapper}>
-      <View style={styles.campoNativo}>
-        <TextInput
-          mode="outlined"
-          label={label}
-          value={rotuloAtual}
-          editable={false}
-          error={showError}
-          style={styles.input}
-          outlineStyle={styles.outline}
-          pointerEvents="none"
-        />
-        <Picker
-          selectedValue={value}
-          onValueChange={onValueChange}
-          style={styles.pickerSobreposto}
-          dropdownIconColor="transparent"
-          mode="dropdown"
-        >
-          {options.map((opt) => (
-            <Picker.Item key={opt.value} label={opt.label} value={opt.value} />
-          ))}
-        </Picker>
-      </View>
+      <Menu
+        visible={aberto}
+        onDismiss={fechar}
+        anchor={campoLeitura}
+        style={estiloLarguraMenu}
+        contentStyle={estiloLarguraMenu}
+      >
+        {options.map((opt) => (
+          <Menu.Item
+            key={opt.value}
+            title={opt.label}
+            onPress={() => {
+              onValueChange(opt.value);
+              fechar();
+            }}
+          />
+        ))}
+      </Menu>
       {showError ? (
         <HelperText type="error" visible={showError}>
           {error}
