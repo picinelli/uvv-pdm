@@ -20,28 +20,49 @@ export default function TaskDetailScreen({ route, navigation }) {
   const { taskId } = route.params ?? {};
   const { tarefas } = useTasks();
   const { usuarioId } = useUser();
-  const [tarefa, setTarefa] = useState(() => tarefas.find((t) => t.id === taskId) ?? null);
-  const [loading, setLoading] = useState(!tarefa);
+  const [tarefa, setTarefa] = useState(null);
+  const [loading, setLoading] = useState(true);
   const [erro, setErro] = useState(null);
 
   useEffect(() => {
     if (!taskId) {
       setErro('Tarefa não informada.');
+      setTarefa(null);
       setLoading(false);
       return;
     }
-    if (tarefa) return;
+
+    const naLista = tarefas.find((t) => t.id === taskId);
+    if (naLista) {
+      setTarefa(naLista);
+      setErro(null);
+      setLoading(false);
+      return;
+    }
+
+    let cancelado = false;
+    setLoading(true);
+    setErro(null);
+    setTarefa(null);
+
     (async () => {
       try {
         const data = await fetchTaskById(taskId);
-        setTarefa(data);
+        if (!cancelado) setTarefa(data);
       } catch (e) {
-        setErro(e.message);
+        if (!cancelado) {
+          setErro(e.message);
+          setTarefa(null);
+        }
       } finally {
-        setLoading(false);
+        if (!cancelado) setLoading(false);
       }
     })();
-  }, [taskId, tarefa]);
+
+    return () => {
+      cancelado = true;
+    };
+  }, [taskId, tarefas]);
 
   useEffect(() => {
     if (tarefa && usuarioId && tarefa.usuario_id !== usuarioId) {
